@@ -20,6 +20,14 @@ This file defines the global operational scope for all AI assistants interacting
 4. **Agent-Agnostic**: This skill must work in Claude (Desktop/Web), Cursor (MDC), and Windsurf/Bolt/Others.
 5. **Full-Stack Excellence**: Always prioritize architectural integrity (DB/API) and high-aura UI/UX regardless of the chosen technology stack.
 
+## Supported Platforms
+| Assistant | Ingestion Method |
+| :--- | :--- |
+| **Claude** | Use `/wsa:init` or mention "Ingest the Agency Skill". |
+| **Cursor** | Native `.mdc` rules handle indexing. Type `/wsa` in composer. |
+| **Windsurf** | Works as a global brain. Mention "Follow WSA standards". |
+| **Gemini** | Upload the `.claude/skills/wsa/` folder as context. |
+
 ## Global Context
 | System | File Reference |
 | :--- | :--- |

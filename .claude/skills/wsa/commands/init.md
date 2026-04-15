@@ -1,9 +1,13 @@
-# /wsa:init — New Project Initialization
-
-Runs: Phase 0.5 profiling → Phase 1 discovery → creates all state files.
-Creates: PROJECT.md, STATE.md, REQUIREMENTS.md, ROADMAP.md
-
 ---
+
+## Step 0 — The Discovery Pass (MANDATORY)
+
+Before initializing, the AI must research and verify the availability of critical infrastructure for the client's country of operation.
+1. **Payment Verification**: Is the intended provider (Stripe, Razorpay, etc.) supported?
+2. **Data Residency**: Does the suggested stack (Vercel, AWS, etc.) comply with local laws?
+3. **Legal Check**: Identify any jurisdictional bans on services or required compliance markers (GDPR, etc.).
+
+Do not proceed to profiling if these are unknowns. Point them out to the user first.
 
 ## Step 1 — Run Phase 0.5 Profiling
 

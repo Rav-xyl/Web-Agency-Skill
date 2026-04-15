@@ -2,6 +2,18 @@
 
 A senior-level, spec-driven, and agent-agnostic operating system designed for solo developers and agency partners to orchestrate high-fidelity web projects with absolute precision.
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Aura: High](https://img.shields.io/badge/Aura-High-blueviolet)
+![PRs: Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen)
+
+---
+
+## ⚡ Quickstart (30 Seconds)
+
+1. **Clone**: `git clone https://github.com/Rav-xyl/Web-Agency-Skill`
+2. **Ingest**: Point your AI assistant (Claude, Cursor, Windsurf) to the repo root.
+3. **Initialize**: Type `/wsa:init` to bootstrap your professional project lifecycle.
+
 ---
 
 ## 🎭 The Mindset: Senior Full-Stack Partner
@@ -108,6 +120,13 @@ Point your AI assistant to this root and trigger the skill:
 - **[High-Aura UI/UX](./.claude/skills/wsa/references/aura.md)**: Cinematic motion and visual depth standards.
 - **[Backend Integrity](./.claude/skills/wsa/references/backend.md)**: DB normalization and API hardening patterns.
 - **[Security & legal](./.claude/skills/wsa/references/security.md)**: OWASP standards and GDPR compliance.
+
+---
+
+## 🚫 What This Is NOT
+- **It is NOT a CLI tool**: It is a collection of logic and references that your AI assistant uses to guide its own CLI usage.
+- **It is NOT a SaaS**: It's an open-source framework for building high-end client projects.
+- **It is NOT a "Prompt"**: It's a structured operating system with state management and automated gates.
 
 ---
 

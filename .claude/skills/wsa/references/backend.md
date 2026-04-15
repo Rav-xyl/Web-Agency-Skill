@@ -2,45 +2,154 @@
 
 This guide defines the senior-level patterns required for full-stack agency delivery. These principles apply regardless of the specific stack (SQL, NoSQL, Serverless, or Monolith).
 
-## 1. Database Modeling (Professional Integrity)
+---
+
+## 1. Provider Discovery & Evaluation
+Before implementing a third-party service, the AI must verify availability and suitability for the client's jurisdiction.
+
+### [Checklist] Service Qualification
+- **Jurisdiction**: Is the provider supported in the client's country? (e.g., Stripe vs. Razorpay vs. Adyen).
+- **Compliance**: Does the provider meet local data residency laws (GDPR, CCPA, Digital Personal Data Protection Act)?
+- **Currency**: Does it support the settlement currency required by the business?
+- **Redundancy**: Is there a secondary provider available if the primary fails/rejects the business?
+
+---
+
+## 2. Database Modeling (Professional Integrity)
 
 ### Schema Design Principles
-- **Normalization vs. Performance**: Aim for 3NF (Third Normal Form) for integrity, but denormalize strategically for high-read performance in high-aura UI.
-- **Type Safety**: Use strictly typed schemas (Prisma, Zod, SQL DDL). Avoid "magic" JSON columns unless for raw logging.
-- **Transactional Safety**: All multi-step operations (e.g., Payment + Order Creation) MUST be wrapped in transactions or idempotent safeguards.
+- **Normalization (3NF)**: Prioritize data integrity. Every non-key attribute must depend on the primary key, the whole key, and nothing but the key.
+- **Relational Integrity**: Use Foreign Keys and Constraints at the database level. Never rely solely on application-level logic for integrity.
 
-### Data Migrations
-- Never perform ad-hoc schema changes. All changes must be versioned migrations tracked in Git.
-- Always include "Down" migrations for rollback safety.
+### [Example] Normalized E-commerce Schema (SQL)
+```sql
+-- Core Business Entities
+CREATE TABLE customers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE products (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sku VARCHAR(50) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    price_cents INTEGER NOT NULL, -- Always store currency in cents
+    currency CHAR(3) DEFAULT 'USD'
+);
+
+CREATE TABLE orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_id UUID REFERENCES customers(id),
+    status VARCHAR(50) NOT NULL, -- e.g., 'pending', 'paid', 'failed'
+    total_cents INTEGER NOT NULL,
+    idempotency_key UUID UNIQUE NOT NULL, -- Prevent double charging
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE order_items (
+    order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+    product_id UUID REFERENCES products(id),
+    quantity INTEGER CHECK (quantity > 0),
+    unit_price_cents INTEGER NOT NULL,
+    PRIMARY KEY (order_id, product_id)
+);
+```
 
 ---
 
-## 2. API Contract-First Design
+## 3. Agnostic Integration Patterns
 
-### Validation Layer
-- **Zod/JSON Schema**: Use a strict validation layer at the edge of every API route. 
-- Never trust client-side data. Sanitization is non-negotiable.
+### The Gateway Interface (Strategy Pattern)
+Decouple business logic from specific provider SDKs.
 
-### Hardening Patterns
-- **API Rate Limiting**: Implement per-user or per-IP limiting on all public routes.
-- **Auth Guards**: Use standardized middleware for `isAuthenticated` and `hasRole` checks.
-- **Error Handling**: Standardize error responses (e.g., `{ error: { code, message, field } }`). Never leak stack traces to the frontend.
+```typescript
+// Define a common interface for all payment providers
+interface PaymentGateway {
+  processPayment(amount: number, currency: string, source: string): Promise<PaymentResult>;
+  verifyWebhook(payload: any, signature: string): boolean;
+}
+
+// Strategy 1: Stripe Adapter
+class StripeAdapter implements PaymentGateway {
+  async processPayment(amount: number, currency: string, source: string) {
+    // Stripe specific logic
+    return { success: true, transactionId: 'ch_...' };
+  }
+}
+
+// Strategy 2: Razorpay Adapter (For countries where Stripe is limited)
+class RazorpayAdapter implements PaymentGateway {
+  async processPayment(amount: number, currency: string, source: string) {
+    // Razorpay specific logic
+    return { success: true, transactionId: 'pay_...' };
+  }
+}
+```
 
 ---
 
-## 3. Business Logic Isolation (The "Service" Layer)
+## 4. API Contract-First Design (Zod Registry)
+Use a centralized registry for all data entering or leaving the system.
 
-- Keep controllers/routes thin.
-- Execute business logic in isolated "Services" or "Actions." This allows for easier unit testing and future portability.
+```typescript
+import { z } from 'zod';
+
+// Agnostic Payment Request
+export const PaymentRequestSchema = z.object({
+  orderId: z.string().uuid(),
+  amountCents: z.number().int().positive(),
+  currency: z.enum(['USD', 'EUR', 'INR', 'GBP']),
+  paymentMethodId: z.string().min(1),
+});
+
+// Environment Configuration Validation
+export const EnvSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  PAYMENT_PROVIDER: z.enum(['STRIPE', 'RAZORPAY', 'ADYEN']),
+  WEBHOOK_SECRET: z.string().min(32),
+});
+```
 
 ---
 
-## 4. Integration Excellence
+## 5. Webhook Integrity (Async Guard)
+Always verify signatures before processing asynchronous events.
 
-### Webhooks (Async Integrity)
-- Handle webhooks (Stripe, Resend, CMS) with cryptographic signature verification.
-- Use a persistent task queue if the processing takes >1 second to avoid timeouts.
+```typescript
+async function handleWebhook(req: Request) {
+  const signature = req.headers.get('x-provider-signature');
+  const payload = await req.text();
 
-### Environment Management
-- Strict separation of `development`, `staging`, and `production` environments.
-- Use a secret manager; NEVER commit `.env` or any secret keys to Git.
+  // 1. Verify Source (Agnostic Wrapper)
+  const isValid = gateway.verifyWebhook(payload, signature);
+  if (!isValid) throw new Error("Unauthorized Webhook Source");
+
+  // 2. Map to Internal State
+  const event = JSON.parse(payload);
+  const internalId = event.data.object.metadata.internal_id;
+
+  // 3. Update State via Transaction
+  await db.transaction(async (tx) => {
+    const order = await tx.orders.findUnique({ where: { id: internalId } });
+    if (order.status === 'paid') return; // Idempotency check
+    await tx.orders.update({ where: { id: internalId }, data: { status: 'paid' } });
+  });
+}
+```
+
+---
+
+## 6. Business Logic Isolation (The Service Layer)
+Keep controllers thin. Logic belongs in Services.
+
+- **Controller**: Parses request → Validates via Zod → Calls Service.
+- **Service**: Executes business logic → Orchestrates Gateways → Accesses Repository.
+- **Repository**: Pure data access (CRUD).
+
+---
+
+## 7. Performance & Hardening
+- **Connection Pooling**: Use a proxy (e.g., PgBouncer) for serverless environments.
+- **Circuit Breakers**: Use `resilience4j` or similar patterns for 3rd party API calls.
+- **Audit Logs**: Record every state change in an `audit_logs` table for financial compliance.
