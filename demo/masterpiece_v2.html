@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WSA Masterpiece V2 | Directorial Excellence</title>
+    
+    <!-- Premium Font Stack -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;600;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Motion Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --accent-primary: #6366f1; /* Indigo */
+            --accent-secondary: #a855f7; /* Purple */
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --easing: cubic-bezier(0.23, 1, 0.32, 1);
+            --padding-safe: clamp(2rem, 8vw, 120px);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        
+        body {
+            background: var(--bg-dark);
+            color: #fff;
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 1. Cinematic Noise Overlay */
+        #grain {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 9999;
+            filter: contrast(120%) brightness(120%);
+        }
+
+        /* 2. Custom Directorial Cursor */
+        #cursor {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.3s var(--easing);
+        }
+
+        /* 3. Hero Visual Background */
+        .hero-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background-color: #000;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+            filter: grayscale(100%) contrast(110%);
+        }
+
+        .mesh-gradient {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 70% 20%, rgba(99, 102, 241, 0.2), transparent 40%),
+                        radial-gradient(circle at 10% 80%, rgba(168, 85, 247, 0.2), transparent 40%);
+        }
+
+        /* 4. Layout & Content */
+        header {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 2rem var(--padding-safe);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .logo { font-weight: 900; letter-spacing: -0.05em; font-size: 1.2rem; }
+        .nav-link { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; }
+
+        section {
+            padding: 0 var(--padding-safe);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-content { max-width: 1400px; width: 100%; }
+
+        .line-container { overflow: hidden; }
+        
+        .label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--accent-primary);
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(3.5rem, 12vw, 10rem);
+            line-height: 0.9;
+            margin-bottom: 3rem;
+            letter-spacing: -0.04em;
+            font-style: italic;
+        }
+
+        .split-span { display: inline-block; transform: translateY(110%); }
+
+        .desc {
+            max-width: 600px;
+            font-size: 1.4rem;
+            line-height: 1.4;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 4rem;
+        }
+
+        /* 5. Bento Showreel */
+        .showreel {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2rem;
+            margin-top: 10vh;
+            padding-bottom: 20vh;
+        }
+
+        .bento-item {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 4px; /* Brutalist feel */
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            transition: border 0.4s var(--easing);
+        }
+
+        .bento-item:hover { border: 1px solid var(--accent-primary); }
+        .bento-item h3 { font-family: var(--font-serif); font-size: 2rem; margin-bottom: 1rem; }
+        .bento-item p { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+        .col-4 { grid-column: span 4; }
+        .col-8 { grid-column: span 8; }
+        .col-6 { grid-column: span 6; }
+
+    </style>
+</head>
+<body>
+    <div id="grain"></div>
+    <div id="cursor"></div>
+    
+    <div class="hero-bg">
+        <img src="../Launch_Visual.png" class="hero-image" alt="Background">
+        <div class="mesh-gradient"></div>
+    </div>
+
+    <header>
+        <div class="logo">WSA.SKILL</div>
+        <div class="nav-link">ARCHIVE / 2024</div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <span class="label">Architecture & Direction</span>
+                <div class="line-container">
+                    <h1>
+                        <span class="split-span">Directorial.</span><br/>
+                        <span class="split-span">Precision.</span>
+                    </h1>
+                </div>
+                <div class="line-container">
+                    <p class="desc">The Senior Partner framework for high-fidelity web delivery. We don't just build, we orchestrate digital legacies.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="work">
+            <div class="showreel">
+                <div class="bento-item col-8">
+                    <span class="label" style="margin-bottom: 1rem;">Core Pillar 01</span>
+                    <h3>Architectural Integrity</h3>
+                    <p>Moving beyond standard prompts into production-grade 3NF schemas and hardened Zod registries. No placeholders. No slop.</p>
+                </div>
+                <div class="bento-item col-4">
+                    <span class="label" style="margin-bottom: 1rem;">Core Pillar 02</span>
+                    <h3>High-Aura UX</h3>
+                    <p>Implementing cinematic motion curves and high-inertia smooth scroll as a technical standard.</p>
+                </div>
+                <div class="bento-item col-6">
+                    <h3>GSD Lifecycle</h3>
+                    <p>9-phase proprietary workflow covering everything from Prospecting to monthly Growth Loops.</p>
+                </div>
+                <div class="bento-item col-6" style="background: var(--accent-primary);">
+                    <h3 style="color: #000;">10/10 Score</h3>
+                    <p style="color: #000; opacity: 0.8;">The first AI framework with an integrated Integrity Audit gate.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Initialize Lenis Smooth Scroll
+        const lenis = new Lenis()
+        function raf(time) {
+            lenis.raf(time)
+            requestAnimationFrame(raf)
+        }
+        requestAnimationFrame(raf)
+
+        // Custom Cursor Logic
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.5, ease: "power4.out" });
+        });
+
+        // Entrance Choreography
+        const tl = gsap.timeline({ defaults: { ease: "power4.out", duration: 1.8 }});
+
+        tl.from(".label", { opacity: 0, y: 20, duration: 1 }, 0.5)
+          .to(".split-span", { y: 0, stagger: 0.15 }, "-=0.8")
+          .from(".desc", { opacity: 0, y: 30 }, "-=1.2")
+          .from(".bento-item", { 
+             opacity: 0, 
+             y: 50, 
+             stagger: 0.1, 
+             scrollTrigger: {
+                trigger: ".showreel",
+                start: "top 80%",
+             }
+          }, "-=1");
+
+        // Subtle background drift
+        gsap.to(".hero-image", {
+            scale: 1.1,
+            duration: 20,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+    </script>
+</body>
+</html>
