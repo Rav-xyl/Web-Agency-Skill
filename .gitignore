@@ -1,0 +1,20 @@
+# State Files (Exclude from skill repo, keep in project repo)
+PROJECT.md
+STATE.md
+REQUIREMENTS.md
+ROADMAP.md
+
+# Logs & Temp
+*.log
+.gemini/
+.claude/backups/
+
+# Secrets
+.env
+.env.local
+config/secrets/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
