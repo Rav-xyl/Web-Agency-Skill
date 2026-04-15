@@ -6,6 +6,17 @@ Creates: .planning/phases/N-UAT.md, fix task specs if issues found
 
 ---
 
+## Step 0 — Automated Integrity Checks
+
+Before UAT begins, verify structural integrity. Dispatch research sub-agent or run terminal:
+1. **Placeholder Ban**: `grep -r "TODO\|FIXME\|lorem\|placeholder" .` (Exclude `references/hardening.md`)
+2. **Architectural Audit**: Ensure `TECHNICAL_SPEC.md` exists if Phase >= 3a.
+3. **Integrity Score**: Calculate Score (0-100) per `references/hardening.md`.
+
+If Score < 80 → **Refuse UAT**. Issue mandatory fix tasks first.
+
+---
+
 ## Step 1 — Extract Testable Deliverables
 
 From N-SUMMARY.md and REQUIREMENTS.md, list everything the user should now be able to do.

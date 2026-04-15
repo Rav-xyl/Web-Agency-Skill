@@ -4,8 +4,8 @@
     "sections": ["Project", "Success Metrics", "Tech Stack"]
   },
   "state": {
-    "required_fields": ["Phase", "Status", "Last action"],
-    "sections": ["Current State", "Decisions made", "Open items", "Known issues"]
+    "required_fields": ["Phase", "Status", "Integrity Score", "Security status", "Last action"],
+    "sections": ["Current State", "Integrity Audit", "Decisions made", "Open items", "Known issues"]
   },
   "requirements": {
     "sections": ["v1 Requirements", "Out of scope (v2)"]

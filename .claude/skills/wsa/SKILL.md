@@ -97,6 +97,7 @@ Group tasks by dependency. Wave 1 (Parallel) -> Wave 2 (Dependent). Use surgical
 | **High Aura** | `./references/aura.md` | Cinematic UI/UX, Motion, Assets |
 | **Templates** | `./references/templates.md` | Proposals, Contracts, Emails |
 | **Deployment**| `./references/deployment.md`| Vercel, VPS, Nginx recipes |
+| **Hardening** | `./references/hardening.md` | Mandatory Integrity Checks, 3NF, Zod |
 | **Sub-Agents**| `./references/sub-agents.md`| Heavy parallel processing |
 
 ---
@@ -151,7 +152,15 @@ Last updated: [date]
 ## Current State
 Phase: [number — name]
 Status: [not started / in progress / complete]
+Integrity Score: [0-100]
+Security status: [Clean / Warning / Critical / Not Audited]
 Last action: [what was just done]
+
+## Integrity Audit
+- [ ] No placeholders found
+- [ ] 3NF DB Schema Validated
+- [ ] Zod API Contracts Verified
+- [ ] [Audit result 4]
 
 ## Decisions made
 - [Decision: what + why]

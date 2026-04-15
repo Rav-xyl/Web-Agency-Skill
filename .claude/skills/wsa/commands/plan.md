@@ -38,6 +38,7 @@ See Operating System section of ../SKILL.md for state tracking rules.
 Rules:
 - 3–6 tasks per phase. Split large phases into N-PLAN-A.md and N-PLAN-B.md if needed.
 - Each task small enough to execute in a fresh context window.
+- **Mandatory for Phase 3 (Build)**: Task `N-00` must be: *"Architectural Locking: Verify TECHNICAL_SPEC.md defines 3NF DB schema and Zod API contracts per references/backend.md"*.
 - task type: `auto` (sequential), `parallel` (same wave), `sub-agent` (fresh context)
 - `<depends>` must reference exact task IDs that must complete first, or "none"
 - `<verify>` must be a concrete, runnable check — not "make sure it works"
