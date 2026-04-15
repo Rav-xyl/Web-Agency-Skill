@@ -4,6 +4,15 @@ STATE.md
 REQUIREMENTS.md
 ROADMAP.md
 
+# Marketing & Launch Assets (KEEP LOCAL - NEVER COMMIT)
+LINKEDIN*
+*.png
+*.webp
+*.txt
+!LICENSE
+!README.md
+!Launch_Visual.png
+
 # Logs & Temp
 *.log
 .gemini/
